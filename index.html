@@ -1,0 +1,239 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <title>创宇盾防御设置</title>
+  </head>
+  <body>
+    <!--弹窗部分-->
+    <div class="md-modal md-effect-2" id="modal-2">
+      <div class="md-content">
+        <h3 id="modistr">添加策略</h3>
+        <form>
+          <p><label>策略名称<span class="alert">* </span> </label><input id="policyname" type="text" name="policyname" required/></p>
+          <p><label>匹配条件 </label>
+              <table cellspacing="0" cellpadding="0" class="table_border" width="100%">
+                  <head>
+                      <style type="text/css" table rules=rows>
+                      </style>
+                  </head>
+                  <tr height="64" class="tablestyle">
+                      <td>
+                          <nobr>类型</nobr>
+                      </td>
+                      <td>
+                          <nobr>匹配字段</nobr>
+                      </td>
+                      <td>
+                          <nobr>逻辑符</nobr>
+                      </td>
+                      <td>
+                          <nobr>匹配内容</nobr>
+                      </td>   
+                  </tr>
+                  <tr>
+                      <td>
+                          <select id="type">
+                              <option type="checkbox" value="1">基础</option>
+                              <option type="checkbox" value="2">自定义</option>
+                          </select>
+                      </td>
+                      <td>
+                          <select id="field">
+                              <option type="checkbox" value="1">Cookie</option>
+                              <option type="checkbox" value="2">Referer</option>
+                              <option type="checkbox" value="3">HTTP-Method</option>
+                              <option type="checkbox" value="4">User-Agent</option>
+                              <option type="checkbox" value="5">X-Forwarded-For</option>
+                              <option type="checkbox" value="6">URI</option>
+                          </select>
+                      </td>
+                      <td>
+                          <select id="symbol">
+                              <option type="checkbox" value="1">包含</option>
+                              <option type="checkbox" value="2">不包含</option>
+                              <option type="checkbox" value="3">等于</option>
+                              <option type="checkbox" value="4">不等于</option>
+                              <option type="checkbox" value="5">长度小于</option>
+                              <option type="checkbox" value="6">长度等于</option>
+                          </select>
+                      </td>
+                      <td>
+                          <input id="content" name="02" type="text" placeholder="只允许填写一个匹配项" required>
+                      </td>               
+                  </tr>
+              </table></p>
+          <p class="note">1、每条策略最多添加3个条件，且所有条件全部匹配上，该策略才生效。</p>
+          <p class="note">2、自定义字段只允许使用字母、数字、横杠，不超过50个字符，且不能与可选字段重复。
+              <a href="http://help.yunaq.com/faq/1442/index.html" target="_blank">查看匹配字段说明</a></p>
+          <p><label>匹配动作<span class="alert">* </span> </label ><td>
+              <select id="action">
+                  <option type="checkbox" value="1">阻断</option>
+                  <option type="checkbox" value="2">放行</option>
+                  <option type="checkbox" value="3">记录</option>
+                  <option type="checkbox" value="4">JS挑战</option>
+                  <option type="checkbox" value="5">验证码</option>
+              </select>
+            </td></p>
+          <p><label>优先级<span class="alert">* </span> </label>
+            <input type="text" oninput="if(!/^[0-9]+$/.test(value)) value=value.replace(/\D/g,'');if(value>100)value=100;if(value<1)value=1"  id="priority" name="priority" required/></p>
+          <span class="note">请填入数字1~100，数字越小代表优先级越高。</span>
+          <p><label>生效端口 </label><input id="port" type="text" name="port" /></p>
+          <span class="note">不填写默认对所有端口生效</span>
+        </form>
+          <p>
+              <button class="returntomenu" id="submit" type="button" value="修改确认" onclick="update(this);">确认</button>
+              <!--关闭按钮-->
+              <button class="md-close" type="button" onclick="cancel(this);">取消</button> 
+          </p>   
+      </table>         
+        </div>
+      </div>
+    </div>
+    <!--主页面部分-->
+    <div class="container">
+      <header>
+        <h1>精确访问控制策略</h1>
+      </header>
+      <div class="column">
+        <button class="md-trigger" data-modal="modal-2" style="cursor: pointer;border-radius:5%;height:50px;width:110px;border-style: hidden;background-color:#0066CC;color: white;">添加策略</button>
+        <span class="detail"> 最多可添加20条策略。 </span>
+      </div>          
+
+<table cellspacing="0" cellpadding="0" class="table_border" width="100%">
+    <head>
+        <style type="text/css">            
+        </style>
+    </head>
+    <div id="table_wrap">
+      <table class="table" id="listTable">
+    <tr height="64" class="tablestyle">
+        <td>
+            <input type="checkbox" name="item" onclick="checkAll(this);">
+        </td>
+        <td>
+            <nobr>策略名称</nobr>
+        </td>
+        <td>
+            <nobr>匹配条件</nobr>
+        </td>
+        <td>
+            <nobr>匹配动作</nobr>
+        </td>
+        <td>
+            <nobr>生效端口</nobr>
+        </td>
+        <td>
+            <nobr>优先级</nobr>
+        </td>
+        <td>
+            <nobr>策略开关</nobr>
+        </td>
+        <td>
+            <nobr>操作</nobr>
+        </td>   
+    </tr>
+    
+    <tr>
+        <td>
+            <input type="checkbox" name="item">
+        </td>
+        <td >示例规则_账号爆破防护
+        </td>
+        <td>
+            <p>URI 包含 /login</p>        
+            <p>HTTP-Method 等于 POST</p>
+            <p>Referer 不存在 </p>
+        </td>
+        <td>阻断
+        </td>
+        <td>全部
+        </td>
+        <td>1
+        </td>
+        <td>
+            <input type="checkbox" name="switch">
+            <!-- <div class="testswitch" name="onoffswitch">
+                <input class="testswitch-checkbox" id="onoffswitch" type="checkbox">
+                <label class="testswitch-label" for="onoffswitch">
+                    <span class="testswitch-inner" data-on="" data-off=""></span>
+                    <span class="testswitch-switch"></span>
+                </label>
+            </div> -->
+        </td>        
+        <td>
+          <button onclick="modify(this)" class="md-trigger" data-modal="modal-2" type="button" >修改</button>
+          <button onclick="delRow(this);" class="delete" type="button">删除</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="checkbox" name="item">
+        </td>
+        <td>示例规则_API防护
+        </td>
+        <td>
+            <p>URI 包含 /api/</p>        
+            <p>User-Agent 不等于 specialUA</p>
+        </td>
+        <td>阻断
+        </td>
+        <td>全部
+        </td>
+        <td>2
+        </td>
+        <td>
+            <input type="checkbox" name="switch">
+            <!-- <div class="testswitch">
+                <input class="testswitch-checkbox" id="onoffswitch" type="checkbox">
+                <label class="testswitch-label" for="onoffswitch">
+                    <span class="testswitch-inner" data-on="" data-off=""></span>
+                    <span class="testswitch-switch"></span>
+                </label>
+            </div> -->
+        </td>
+        <td>
+            <button onclick="modify(this)" class="md-trigger" data-modal="modal-2" type="button" >修改</button>
+            <button onclick="delRow(this);" class="delete" type="button">删除</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="checkbox" name="item">
+        </td>
+        <td>示例规则_网络爬虫放行
+        </td>
+        <td>
+            <p>User-Agent 包含 spider</p>
+        </td>
+        <td>放行
+        </td>
+        <td>全部
+        </td>
+        <td>3
+        </td>
+        <td>
+            <input type="checkbox" name="switch">
+            <!-- <div class="testswitch">
+                <input class="testswitch-checkbox" id="onoffswitch" type="checkbox">
+                <label class="testswitch-label" for="onoffswitch">
+                    <span class="testswitch-inner" data-on="" data-off=""></span>
+                    <span class="testswitch-switch"></span>
+                </label>
+            </div> -->
+        </td>
+        <td>
+            <button onclick="modify(this)" class="md-trigger" data-modal="modal-2" type="button" >修改</button>
+            <button onclick="delRow(this);" class="delete" type="button">删除</button>
+        </td>
+    </tr>
+</table>
+<button type="button" class="deleteall" onclick="delAllRow();">批量删除</button>
+      </div>
+    </div>
+    <div class="md-overlay"></div>
+    <script src="js/script2.js"></script>
+  </body>
+</html>
